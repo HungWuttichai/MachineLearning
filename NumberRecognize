@@ -1,0 +1,47 @@
+import os
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from keras.datasets import cifar10
+from keras.utils import multi_gpu_model
+from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, AveragePooling2D, ZeroPadding2D
+from keras.layers.core import Activation, Flatten
+from keras.models import Sequential, load_model
+from keras.callbacks import ModelCheckpoint
+from sklearn.model_selection import train_test_split, StratifiedKFold
+
+#defind parameter
+os.chdir("C:/Users/xxx/number/") #add directory
+dataset = 120
+num_test = 24
+batch_size = 20
+n_classes = 10
+epch = 100
+img_size = 28
+
+#load dataset
+x_train = []
+x_test = []
+
+for category in range(dataset):
+        try:
+            name = 'train/number ('+str(category)+').jpg'
+            img_array = cv2.imread(name)/255.0
+            new_array = cv2.resize(img_array, (img_size, img_size))
+            x_train.append(new_array)
+        except Exception as e:
+            pass
+
+for category in range(num_test):
+        try:
+            name = 'test/number ('+str(category)+').jpg'
+            img_array = cv2.imread(name)/255.0 # cv2.IMREAD_GRAYSCALE
+            new_array = cv2.resize(img_array, (img_size, img_size))
+            x_test.append(new_array)
+        except Exception as e:
+            pass
+
+X_train = np.asarray(x_train).astype('float32')
+y_train = ((np.arange(dataset) % 10) / 1.0).astype('float32')
+X_test = np.asarray(x_test).astype('float32')
+y_test = (np.array([2, 9, 5, 7, 2, 3, 7, 4, 0, 9, 8, 5, 5, 0, 8, 7, 2, 4, 3, 5, 3, 2, 7, 3]))
